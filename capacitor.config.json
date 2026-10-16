@@ -1,8 +1,7 @@
 {
   "appId": "com.keuangan.app",
   "appName": "KeuanganKu",
-  "webDir": ".",
-  "bundledWebRuntime": false,
+  "webDir": "www",
   "server": {
     "cleartext": true
   },
