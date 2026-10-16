@@ -1,0 +1,71 @@
+name: Build iOS IPA Package
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+jobs:
+  build-ios:
+    runs-on: macos-14
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Prepare Web Directory (www)
+        run: |
+          mkdir -p www
+          cp -f index.html manifest.json sw.js icon-*.png www/ 2>/dev/null || true
+          ls -la www
+
+      - name: Install Dependencies
+        run: |
+          npm install
+
+      - name: Add and Sync Capacitor iOS
+        run: |
+          npx cap add ios || true
+          npx cap sync ios
+
+      - name: Build Xcode Project
+        run: |
+          cd ios/App
+          xcodebuild \
+            -workspace App.xcworkspace \
+            -scheme App \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            AD_HOC_CODE_SIGNING_ALLOWED=YES \
+            clean build
+
+      - name: Package .IPA Binary
+        run: |
+          mkdir -p Payload
+          APP_PATH=$(find ios/App/build -name "*.app" -type d | head -n 1)
+          if [ -z "$APP_PATH" ]; then
+            echo "Error: Could not find compiled .app folder!"
+            exit 1
+          fi
+          echo "Found compiled app at: $APP_PATH"
+          cp -r "$APP_PATH" Payload/KeuanganKu.app
+          zip -qr KeuanganKu.ipa Payload
+          echo "IPA Package generated successfully!"
+          ls -lh KeuanganKu.ipa
+
+      - name: Upload .IPA Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: KeuanganKu-iOS-IPA
+          path: KeuanganKu.ipa
+          retention-days: 14
