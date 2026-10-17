@@ -32,6 +32,11 @@ jobs:
         run: |
           npx cap add ios || true
           npx cap sync ios
+          if [ -f ios/App/App/Info.plist ]; then
+            plutil -replace UIUserInterfaceStyle -string Dark ios/App/App/Info.plist || true
+            plutil -replace UIViewControllerBasedStatusBarAppearance -bool false ios/App/App/Info.plist || true
+            plutil -replace UIStatusBarStyle -string UIStatusBarStyleLightContent ios/App/App/Info.plist || true
+          fi
 
       - name: Build Xcode Project
         run: |
