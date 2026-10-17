@@ -2,11 +2,14 @@
   "appId": "com.keuangan.app",
   "appName": "KeuanganKu",
   "webDir": "www",
+  "backgroundColor": "#000000",
   "server": {
     "cleartext": true
   },
   "ios": {
     "scheme": "KeuanganKu",
-    "contentInset": "always"
+    "contentInset": "never",
+    "backgroundColor": "#000000",
+    "preferredContentMode": "mobile"
   }
 }

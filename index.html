@@ -9,7 +9,8 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="KeuanganKu">
-  <meta name="theme-color" content="#0F172A">
+  <meta name="theme-color" content="#000000">
+  <meta name="msapplication-navbutton-color" content="#000000">
   <link rel="apple-touch-icon" href="icon-192.png">
   <link rel="manifest" href="manifest.json">
   
@@ -40,8 +41,8 @@
       --ios-teal: #64D2FF;
       
       --font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", sans-serif;
-      --safe-top: env(safe-area-inset-top, 24px);
-      --safe-bottom: env(safe-area-inset-bottom, 20px);
+      --safe-top: env(safe-area-inset-top, 44px);
+      --safe-bottom: env(safe-area-inset-bottom, 34px);
       
       --radius-sm: 10px;
       --radius-md: 16px;
@@ -93,9 +94,23 @@
       -webkit-user-select: none;
     }
 
-    html, body {
+    html {
       width: 100%;
       height: 100%;
+      height: 100dvh;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: #000000 !important;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      width: 100%;
+      height: 100%;
+      height: 100dvh;
+      min-height: 100vh;
       margin: 0;
       padding: 0;
       overflow: hidden;
@@ -105,7 +120,7 @@
       right: 0;
       bottom: 0;
       font-family: var(--font-family);
-      background-color: #000000;
+      background-color: #000000 !important;
       color: var(--text-primary);
       touch-action: manipulation;
       transition: background-color 0.4s ease;
@@ -115,9 +130,14 @@
     .app-wrapper {
       width: 100%;
       height: 100%;
+      height: 100dvh;
+      min-height: 100%;
+      margin: 0;
+      padding: 0;
       display: flex;
       justify-content: center;
-      align-items: center;
+      align-items: stretch;
+      background-color: #000000 !important;
       position: relative;
       overflow: hidden;
     }
@@ -126,7 +146,11 @@
       width: 100%;
       max-width: 480px;
       height: 100%;
-      background: var(--bg-primary);
+      height: 100dvh;
+      min-height: 100%;
+      margin: 0;
+      padding: 0;
+      background: #000000 !important;
       position: relative;
       overflow: hidden;
       display: flex;
@@ -150,12 +174,16 @@
       overflow-x: hidden;
       -webkit-overflow-scrolling: touch;
       overscroll-behavior-y: contain;
-      padding: calc(var(--safe-top) + 14px) 18px calc(var(--safe-bottom) + 120px);
+      padding: calc(var(--safe-top) + 14px) 18px calc(var(--safe-bottom) + 95px);
       position: relative;
       box-sizing: border-box;
+      background-color: #000000;
     }
     .app-screen::-webkit-scrollbar {
       display: none;
+    }
+    [data-theme="light"] .app-screen {
+      background-color: #F2F2F7;
     }
 
     /* Typography */
@@ -766,59 +794,65 @@
       bottom: 0;
       left: 0;
       right: 0;
-      height: 110px;
-      background: linear-gradient(to top, #000000 0%, rgba(0, 0, 0, 0.88) 45%, rgba(0, 0, 0, 0) 100%);
+      height: calc(var(--safe-bottom) + 75px);
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.6) 40%, rgba(0, 0, 0, 0) 100%);
       pointer-events: none;
       z-index: 550;
     }
     [data-theme="light"] .bottom-scrim-mask {
-      background: linear-gradient(to top, #F2F2F7 0%, rgba(242, 242, 247, 0.88) 45%, rgba(242, 242, 247, 0) 100%);
+      background: linear-gradient(to top, rgba(242, 242, 247, 0.95) 0%, rgba(242, 242, 247, 0.6) 40%, rgba(242, 242, 247, 0) 100%);
     }
 
     .tab-bar-container {
       position: absolute;
-      bottom: max(calc(var(--safe-bottom) - 16px), 10px);
-      left: 14px;
-      right: 14px;
-      height: 64px;
-      border-radius: 34px;
-      background: rgba(18, 18, 22, 0.82);
+      bottom: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+      height: calc(var(--safe-bottom) + 54px);
+      padding-bottom: var(--safe-bottom);
+      padding-top: 4px;
+      padding-left: 10px;
+      padding-right: 10px;
+      border-radius: 26px 26px 0 0;
+      background: rgba(16, 16, 20, 0.94);
       backdrop-filter: blur(40px) saturate(220%);
       -webkit-backdrop-filter: blur(40px) saturate(220%);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+      border-left: none;
+      border-right: none;
+      border-bottom: none;
       box-shadow: 
-        0 14px 34px rgba(0, 0, 0, 0.6),
-        0 1px 0 rgba(255, 255, 255, 0.15) inset,
-        0 -1px 0 rgba(0, 0, 0, 0.3) inset;
+        0 -8px 30px rgba(0, 0, 0, 0.7),
+        0 1px 0 rgba(255, 255, 255, 0.12) inset;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 6px;
       z-index: 600;
       pointer-events: auto;
+      box-sizing: border-box;
     }
     [data-theme="light"] .tab-bar-container {
-      background: rgba(255, 255, 255, 0.88);
-      border: 1px solid rgba(255, 255, 255, 0.5);
+      background: rgba(255, 255, 255, 0.92);
+      border-top: 1px solid rgba(0, 0, 0, 0.08);
       box-shadow: 
-        0 10px 28px rgba(0, 0, 0, 0.1),
+        0 -8px 25px rgba(0, 0, 0, 0.08),
         0 1px 0 rgba(255, 255, 255, 0.9) inset;
     }
 
-    /* Sliding Bubble Glass Pill Indicator (Soft Translucent Glow, No Harsh White Border) */
+    /* Sliding Bubble Glass Pill Indicator (Soft Translucent Liquid Glow) */
     .bubble-glass-indicator {
       position: absolute;
-      top: 6px;
-      bottom: 6px;
+      top: 4px;
+      height: 48px;
       left: 0;
       width: 58px;
-      border-radius: 28px;
-      background: rgba(255, 255, 255, 0.09);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.12);
       box-shadow: 
-        0 4px 12px rgba(0, 0, 0, 0.2),
-        inset 0 1px 1px rgba(255, 255, 255, 0.15);
+        0 4px 14px rgba(0, 0, 0, 0.25),
+        inset 0 1px 1px rgba(255, 255, 255, 0.2);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       pointer-events: none;
@@ -828,8 +862,8 @@
     }
     [data-theme="light"] .bubble-glass-indicator {
       background: rgba(0, 122, 255, 0.12);
-      border: 1px solid rgba(0, 122, 255, 0.15);
-      box-shadow: 0 4px 12px rgba(0, 122, 255, 0.1);
+      border: 1px solid rgba(0, 122, 255, 0.16);
+      box-shadow: 0 4px 12px rgba(0, 122, 255, 0.12);
     }
 
     .tab-item {
@@ -845,12 +879,12 @@
       cursor: pointer;
       position: relative;
       z-index: 2;
-      height: 100%;
-      border-radius: 28px;
+      height: 48px;
+      border-radius: 20px;
       transition: color 0.3s ease, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
     .tab-item:active {
-      transform: scale(0.86);
+      transform: scale(0.88);
     }
     .tab-item.active {
       color: #fff;
@@ -867,7 +901,7 @@
       transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease;
     }
     .tab-item.active .tab-icon {
-      transform: scale(1.12);
+      transform: scale(1.1);
       filter: drop-shadow(0 2px 8px rgba(10, 132, 255, 0.6));
     }
     .tab-label {
@@ -882,8 +916,8 @@
     
     /* Central Floating 3D Bubble Glass Orb (+) */
     .floating-add-btn {
-      width: 50px;
-      height: 50px;
+      width: 48px;
+      height: 48px;
       border-radius: 50%;
       background: linear-gradient(135deg, #0A84FF 0%, #0062D2 45%, #BF5AF2 100%);
       border: 1.5px solid rgba(255, 255, 255, 0.45);
@@ -900,6 +934,7 @@
       z-index: 5;
       flex-shrink: 0;
       margin: 0 4px;
+      margin-top: -8px;
       transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
       animation: bubbleGlassFloat 3.5s ease-in-out infinite;
     }
