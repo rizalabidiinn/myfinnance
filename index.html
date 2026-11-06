@@ -1104,6 +1104,128 @@
       text-overflow: ellipsis;
       width: 100%;
     }
+
+    /* Wallet Selector Pills */
+    .wallet-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      border-radius: var(--radius-md);
+      background: var(--bg-input);
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .wallet-pill:active { transform: scale(0.94); }
+    .wallet-pill.active {
+      border-color: var(--active-color, var(--ios-blue));
+      background: var(--active-bg, rgba(10, 132, 255, 0.14));
+    }
+    .wallet-pill .wallet-icon {
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .wallet-pill .wallet-name {
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .wallet-pill .wallet-balance {
+      font-size: 11px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+    .wallet-color-dot {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 3px solid transparent;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .wallet-color-dot.active {
+      border-color: rgba(255,255,255,0.8);
+      transform: scale(1.2);
+    }
+    .wallet-color-dot:active { transform: scale(0.9); }
+
+    /* Home Wallet Switcher Scroll Bar (Apple Wallet Style) */
+    .wallet-scroll-container {
+      width: 100%;
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      margin-bottom: 14px;
+      padding-bottom: 2px;
+      scrollbar-width: none;
+    }
+    .wallet-scroll-container::-webkit-scrollbar {
+      display: none;
+    }
+    .wallet-scroll-track {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 2px 2px;
+    }
+    .wallet-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 14px;
+      border-radius: var(--radius-full);
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+      cursor: pointer;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      transition: all 0.25s var(--spring-smooth);
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .wallet-chip:active {
+      transform: scale(0.93);
+    }
+    .wallet-chip.active {
+      background: linear-gradient(135deg, rgba(10, 132, 255, 0.25) 0%, rgba(191, 90, 242, 0.25) 100%);
+      border-color: var(--ios-blue);
+      color: #FFFFFF;
+      box-shadow: 0 4px 14px rgba(10, 132, 255, 0.35);
+    }
+    [data-theme="light"] .wallet-chip.active {
+      background: #FFFFFF;
+      border-color: var(--ios-blue);
+      color: var(--ios-blue);
+      box-shadow: 0 4px 12px rgba(0, 122, 255, 0.2);
+    }
+    .wallet-chip-balance {
+      font-size: 11px;
+      font-weight: 500;
+      opacity: 0.85;
+      padding-left: 2px;
+    }
+    .wallet-chip.active .wallet-chip-balance {
+      opacity: 1;
+      font-weight: 700;
+      color: var(--ios-teal);
+    }
+    [data-theme="light"] .wallet-chip.active .wallet-chip-balance {
+      color: var(--ios-blue);
+    }
+    .wallet-chip-add {
+      border-style: dashed;
+      background: transparent;
+      color: var(--ios-blue);
+    }
     .submit-btn {
       width: 100%;
       background: var(--ios-blue);
@@ -1378,10 +1500,15 @@
           </div>
         </div>
 
+        <!-- Tabungan / Rekening Switcher (Apple Wallet Style) -->
+        <div class="wallet-scroll-container">
+          <div class="wallet-scroll-track" id="homeWalletScroll"></div>
+        </div>
+
         <!-- Saldo Hero Card (Apple Wallet Style) -->
         <div class="balance-card">
           <div class="balance-header">
-            <span class="balance-title">Total Saldo Keuangan</span>
+            <span class="balance-title" id="balanceCardTitle">Total Saldo Keuangan</span>
             <button class="eye-toggle" onclick="toggleBalanceBlur()" title="Sembunyikan Saldo">
               <svg id="eyeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
@@ -1691,9 +1818,30 @@
           </div>
         </div>
 
+        <!-- Kelola Kantong / Rekening -->
+        <div class="settings-group">
+          <div class="settings-row" style="border-bottom: 1px solid var(--border-subtle);">
+            <div class="settings-left">
+              <div class="settings-icon-box" style="background: #30D158;">💳</div>
+              <div>
+                <div>Kantong &amp; Rekening</div>
+                <div style="font-size: 11px; color: var(--text-secondary);">Kelola sumber keuangan Anda</div>
+              </div>
+            </div>
+          </div>
+          <div id="walletListSettings" style="padding: 12px 16px; display: flex; flex-direction: column; gap: 8px;"></div>
+          <div class="settings-row" onclick="openAddWalletModal()" style="border-top: 1px solid var(--border-subtle);">
+            <div class="settings-left">
+              <div class="settings-icon-box" style="background: var(--ios-blue);">➕</div>
+              <span>Tambah Kantong Baru</span>
+            </div>
+            <span style="color: var(--text-tertiary);">›</span>
+          </div>
+        </div>
+
         <div style="text-align: center; font-size: 12px; color: var(--text-tertiary); margin-top: 20px;">
           KeuanganKu iOS Edition v1.1.0<br>
-          Pencatatan Keuangan, Analisis & Goals Tabungan
+          Pencatatan Keuangan, Analisis &amp; Goals Tabungan
         </div>
       </div>
 
@@ -1797,6 +1945,12 @@
             <input type="text" class="form-input" id="txNote" placeholder="Contoh: Makan siang, Gaji bulanan, Kopi..." required>
           </div>
 
+          <!-- Pilih Kantong / Rekening -->
+          <div class="form-group">
+            <label class="form-label">Kantong / Rekening</label>
+            <div id="walletSelectorGrid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 2px;"></div>
+          </div>
+
           <!-- Tanggal & Metode Bayar -->
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
             <div class="form-group">
@@ -1809,6 +1963,7 @@
                 <option value="Tunai">💵 Tunai</option>
                 <option value="Transfer Bank">🏦 Transfer Bank</option>
                 <option value="E-Wallet">📱 E-Wallet (GoPay/OVO/Dana)</option>
+                <option value="QRIS">🔳 QRIS</option>
                 <option value="Kartu Kredit">💳 Kartu Kredit</option>
               </select>
             </div>
@@ -1894,6 +2049,12 @@
             <button type="button" class="segment-btn active" style="flex: 1; padding: 10px 4px;" onclick="addQuickDeposit(500000)">+500 Ribu</button>
           </div>
 
+          <!-- Sumber Tabungan untuk Setor -->
+          <div class="form-group">
+            <label class="form-label">Setor Dari Tabungan Mana</label>
+            <select class="form-input" id="depositWalletSelect"></select>
+          </div>
+
           <button type="submit" class="submit-btn" style="background: var(--ios-green);">Tabung Sekarang 🎉</button>
         </form>
       </div>
@@ -1972,6 +2133,54 @@
         </button>
       </div>
 
+      <!-- ===================================================================
+           MODAL 5: TAMBAH / EDIT KANTONG (Add Wallet)
+           =================================================================== -->
+      <div class="modal-backdrop" id="modalWalletBackdrop" onclick="closeModal('modalWallet')"></div>
+      <div class="bottom-sheet" id="modalWallet">
+        <div class="sheet-handle"></div>
+        <div class="sheet-header">
+          <div class="sheet-title" id="walletModalTitle">➕ Tambah Kantong Baru</div>
+          <button class="sheet-close-btn" onclick="closeModal('modalWallet')">✕</button>
+        </div>
+        <form id="walletForm" onsubmit="handleSaveWallet(event)">
+          <input type="hidden" id="editWalletId">
+          <div class="form-group">
+            <label class="form-label">Nama Kantong / Rekening</label>
+            <input type="text" class="form-input" id="walletName" placeholder="Contoh: BCA Utama, Gopay, Dompet Belanja..." required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Pilih Ikon</label>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap; padding: 4px 0;" id="walletIconPicker">
+              <div class="category-pill active" onclick="selectWalletIcon('💵', this)"><span style="font-size: 20px;">💵</span></div>
+              <div class="category-pill" onclick="selectWalletIcon('🏦', this)"><span style="font-size: 20px;">🏦</span></div>
+              <div class="category-pill" onclick="selectWalletIcon('📱', this)"><span style="font-size: 20px;">📱</span></div>
+              <div class="category-pill" onclick="selectWalletIcon('🏧', this)"><span style="font-size: 20px;">🏧</span></div>
+              <div class="category-pill" onclick="selectWalletIcon('💼', this)"><span style="font-size: 20px;">💼</span></div>
+              <div class="category-pill" onclick="selectWalletIcon('💳', this)"><span style="font-size: 20px;">💳</span></div>
+              <div class="category-pill" onclick="selectWalletIcon('🏷️', this)"><span style="font-size: 20px;">🏷️</span></div>
+              <div class="category-pill" onclick="selectWalletIcon('💰', this)"><span style="font-size: 20px;">💰</span></div>
+            </div>
+            <input type="hidden" id="selectedWalletIcon" value="💵">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Warna Label</label>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; padding: 4px 0;" id="walletColorPicker">
+              <div class="wallet-color-dot active" data-color="#30D158" style="background:#30D158;" onclick="selectWalletColor('#30D158', this)"></div>
+              <div class="wallet-color-dot" data-color="#0A84FF" style="background:#0A84FF;" onclick="selectWalletColor('#0A84FF', this)"></div>
+              <div class="wallet-color-dot" data-color="#BF5AF2" style="background:#BF5AF2;" onclick="selectWalletColor('#BF5AF2', this)"></div>
+              <div class="wallet-color-dot" data-color="#FF9500" style="background:#FF9500;" onclick="selectWalletColor('#FF9500', this)"></div>
+              <div class="wallet-color-dot" data-color="#FF453A" style="background:#FF453A;" onclick="selectWalletColor('#FF453A', this)"></div>
+              <div class="wallet-color-dot" data-color="#64D2FF" style="background:#64D2FF;" onclick="selectWalletColor('#64D2FF', this)"></div>
+              <div class="wallet-color-dot" data-color="#FFD60A" style="background:#FFD60A;" onclick="selectWalletColor('#FFD60A', this)"></div>
+              <div class="wallet-color-dot" data-color="#8E8E93" style="background:#8E8E93;" onclick="selectWalletColor('#8E8E93', this)"></div>
+            </div>
+            <input type="hidden" id="selectedWalletColor" value="#30D158">
+          </div>
+          <button type="submit" class="submit-btn" id="walletSaveBtn">Simpan Kantong</button>
+        </form>
+      </div>
+
     </div>
   </div>
 
@@ -2009,6 +2218,7 @@
     let appData = {
       transactions: [],
       goals: [],
+      wallets: [],
       settings: {
         darkMode: true,
         soundEnabled: true,
@@ -2018,6 +2228,15 @@
 
     let currentSelectedCategory = null;
     let currentFilterType = 'all';
+    let currentSelectedWallet = null;
+    
+    /* Default Wallets (Rekening/Kantong) */
+    const DEFAULT_WALLETS = [
+      { id: 'w-cash',    name: 'Dompet Tunai',   icon: '💵', color: '#30D158' },
+      { id: 'w-bank',    name: 'Rekening Bank',   icon: '🏦', color: '#0A84FF' },
+      { id: 'w-ewallet', name: 'E-Wallet',        icon: '📱', color: '#BF5AF2' },
+      { id: 'w-savings', name: 'Tabungan',        icon: '🏧', color: '#FF9500' },
+    ];
 
     /* Audio Synthesizer Haptics */
     let audioCtx = null;
@@ -2164,6 +2383,10 @@
       if (saved) {
         try {
           appData = JSON.parse(saved);
+          // Migration: add wallets array if old data doesn't have it
+          if (!appData.wallets || appData.wallets.length === 0) {
+            appData.wallets = JSON.parse(JSON.stringify(DEFAULT_WALLETS));
+          }
         } catch (e) {
           seedInitialData();
         }
@@ -2185,18 +2408,19 @@
 
       appData = {
         transactions: [
-          { id: 'tx-1', type: 'income', amount: 8500000, categoryId: 'salary', note: 'Gaji Pokok Bulanan', date: today, paymentMethod: 'Transfer Bank' },
-          { id: 'tx-2', type: 'expense', amount: 75000, categoryId: 'food', note: 'Makan Siang & Kopi', date: today, paymentMethod: 'E-Wallet' },
-          { id: 'tx-3', type: 'expense', amount: 350000, categoryId: 'groceries', note: 'Belanja Supermarket Mingguan', date: yesterday, paymentMethod: 'Transfer Bank' },
-          { id: 'tx-4', type: 'expense', amount: 50000, categoryId: 'transport', note: 'Isi Bensin Pertamax', date: yesterday, paymentMethod: 'Tunai' },
-          { id: 'tx-5', type: 'income', amount: 1500000, categoryId: 'freelance', note: 'Proyek Desain Web', date: twoDaysAgo, paymentMethod: 'Transfer Bank' },
-          { id: 'tx-6', type: 'expense', amount: 150000, categoryId: 'entertainment', note: 'Tiket Bioskop & Snack', date: twoDaysAgo, paymentMethod: 'E-Wallet' }
+          { id: 'tx-1', type: 'income', amount: 8500000, categoryId: 'salary', note: 'Gaji Pokok Bulanan', date: today, paymentMethod: 'Transfer Bank', walletId: 'w-bank' },
+          { id: 'tx-2', type: 'expense', amount: 75000, categoryId: 'food', note: 'Makan Siang & Kopi', date: today, paymentMethod: 'E-Wallet', walletId: 'w-ewallet' },
+          { id: 'tx-3', type: 'expense', amount: 350000, categoryId: 'groceries', note: 'Belanja Supermarket Mingguan', date: yesterday, paymentMethod: 'Transfer Bank', walletId: 'w-bank' },
+          { id: 'tx-4', type: 'expense', amount: 50000, categoryId: 'transport', note: 'Isi Bensin Pertamax', date: yesterday, paymentMethod: 'Tunai', walletId: 'w-cash' },
+          { id: 'tx-5', type: 'income', amount: 1500000, categoryId: 'freelance', note: 'Proyek Desain Web', date: twoDaysAgo, paymentMethod: 'Transfer Bank', walletId: 'w-bank' },
+          { id: 'tx-6', type: 'expense', amount: 150000, categoryId: 'entertainment', note: 'Tiket Bioskop & Snack', date: twoDaysAgo, paymentMethod: 'E-Wallet', walletId: 'w-ewallet' }
         ],
         goals: [
           { id: 'goal-1', title: 'Beli iPhone 16 Pro', emoji: '📱', targetAmount: 21000000, currentAmount: 14500000, deadline: '2026-12-31' },
           { id: 'goal-2', title: 'Dana Darurat 6 Bulan', emoji: '🛡️', targetAmount: 30000000, currentAmount: 18000000, deadline: '2027-06-30' },
           { id: 'goal-3', title: 'Liburan Akhir Tahun', emoji: '✈️', targetAmount: 8000000, currentAmount: 8000000, deadline: '2026-11-20' }
         ],
+        wallets: JSON.parse(JSON.stringify(DEFAULT_WALLETS)),
         settings: {
           darkMode: true,
           soundEnabled: true,
@@ -2240,19 +2464,31 @@
       else display.classList.remove('blurred');
     }
 
-    function renderAll() {
-      renderSummaryTotals();
-      renderHomeGoals();
-      renderHomeRecentTx();
-      renderFullTxHistory();
-      renderAllGoalsScreen();
-      renderAnalyticsCharts();
+    let activeWalletFilter = 'all';
+
+    function getWalletBalance(walletId) {
+      let bal = 0;
+      if (!appData.transactions) return 0;
+      appData.transactions.forEach(t => {
+        const wid = t.walletId || (appData.wallets && appData.wallets[0] ? appData.wallets[0].id : null);
+        if (wid === walletId) {
+          if (t.type === 'income') bal += t.amount;
+          else if (t.type === 'expense') bal -= t.amount;
+        }
+      });
+      return bal;
     }
 
-    function calculateTotals() {
+    function calculateTotals(filterWalletId = null) {
       let income = 0;
       let expense = 0;
+      if (!appData.transactions) return { income: 0, expense: 0, balance: 0 };
+      
       appData.transactions.forEach(t => {
+        if (filterWalletId && filterWalletId !== 'all') {
+          const wid = t.walletId || (appData.wallets && appData.wallets[0] ? appData.wallets[0].id : null);
+          if (wid !== filterWalletId) return;
+        }
         if (t.type === 'income') income += t.amount;
         else if (t.type === 'expense') expense += t.amount;
       });
@@ -2260,10 +2496,76 @@
     }
 
     function renderSummaryTotals() {
-      const totals = calculateTotals();
+      const totals = calculateTotals(activeWalletFilter);
       animateNumber('totalBalanceVal', totals.balance);
       document.getElementById('totalIncomeDisplay').innerText = `+Rp ${formatIDR(totals.income)}`;
       document.getElementById('totalExpenseDisplay').innerText = `-Rp ${formatIDR(totals.expense)}`;
+
+      const titleEl = document.getElementById('balanceCardTitle');
+      if (titleEl) {
+        if (!activeWalletFilter || activeWalletFilter === 'all') {
+          titleEl.innerText = 'Total Saldo Keuangan';
+        } else {
+          const w = appData.wallets?.find(x => x.id === activeWalletFilter);
+          titleEl.innerText = w ? `Saldo: ${w.icon} ${w.name}` : 'Saldo Tabungan';
+        }
+      }
+    }
+
+    function renderHomeWalletBar() {
+      const container = document.getElementById('homeWalletScroll');
+      if (!container) return;
+      if (!appData.wallets || appData.wallets.length === 0) {
+        appData.wallets = JSON.parse(JSON.stringify(DEFAULT_WALLETS));
+      }
+
+      const grandTotal = calculateTotals('all').balance;
+      const isAllActive = !activeWalletFilter || activeWalletFilter === 'all';
+
+      let html = `
+        <div class="wallet-chip ${isAllActive ? 'active' : ''}" onclick="switchHomeWalletFilter('all')">
+          <span>✨ Semua Tabungan</span>
+          <span class="wallet-chip-balance">Rp ${formatIDR(grandTotal)}</span>
+        </div>
+      `;
+
+      appData.wallets.forEach(w => {
+        const bal = getWalletBalance(w.id);
+        const isActive = activeWalletFilter === w.id;
+        html += `
+          <div class="wallet-chip ${isActive ? 'active' : ''}" onclick="switchHomeWalletFilter('${w.id}')">
+            <span>${w.icon} ${w.name}</span>
+            <span class="wallet-chip-balance">Rp ${formatIDR(bal)}</span>
+          </div>
+        `;
+      });
+
+      html += `
+        <div class="wallet-chip wallet-chip-add" onclick="openAddWalletModal()" title="Tambah Tabungan Baru">
+          <span>➕ Baru</span>
+        </div>
+      `;
+
+      container.innerHTML = html;
+    }
+
+    function switchHomeWalletFilter(walletId) {
+      playHapticSound('click');
+      activeWalletFilter = walletId;
+      currentSelectedWallet = (walletId === 'all') ? (appData.wallets[0] ? appData.wallets[0].id : null) : walletId;
+      renderHomeWalletBar();
+      renderSummaryTotals();
+    }
+
+    function renderAll() {
+      renderHomeWalletBar();
+      renderSummaryTotals();
+      renderHomeGoals();
+      renderHomeRecentTx();
+      renderFullTxHistory();
+      renderAllGoalsScreen();
+      renderAnalyticsCharts();
+      renderSettingsWallets();
     }
 
     function animateNumber(elementId, targetVal) {
@@ -2340,6 +2642,8 @@
       const catList = t.type === 'income' ? CATEGORIES.income : CATEGORIES.expense;
       const cat = catList.find(c => c.id === t.categoryId) || { icon: '💸', name: 'Lainnya', color: '#0A84FF' };
       const isIncome = t.type === 'income';
+      const wallet = appData.wallets?.find(w => w.id === t.walletId) || (appData.wallets ? appData.wallets[0] : { name: 'Tabungan', icon: '💳' });
+      const isQRIS = t.paymentMethod === 'QRIS';
 
       return `
         <div class="tx-item" onclick="confirmDeleteTx('${t.id}')">
@@ -2348,10 +2652,15 @@
           </div>
           <div class="tx-details">
             <div class="tx-title">${t.note || cat.name}</div>
-            <div class="tx-meta">
+            <div class="tx-meta" style="flex-wrap: wrap; gap: 4px;">
               <span>${formatDateIndo(t.date)}</span>
               <span>•</span>
-              <span class="tx-badge">${t.paymentMethod || 'Tunai'}</span>
+              <span class="tx-badge" style="background: rgba(10, 132, 255, 0.15); color: var(--ios-blue); font-weight: 600;">
+                ${wallet?.icon || '💳'} ${wallet?.name || 'Tabungan'}
+              </span>
+              <span class="tx-badge" style="${isQRIS ? 'background: rgba(191, 90, 242, 0.22); color: #BF5AF2; font-weight: 700;' : ''}">
+                ${isQRIS ? '🔳 QRIS' : (t.paymentMethod || 'Tunai')}
+              </span>
             </div>
           </div>
           <div class="tx-amount ${isIncome ? 'income' : 'expense'}">
@@ -2372,10 +2681,12 @@
 
       const filtered = appData.transactions.filter(t => {
         const matchesType = currentFilterType === 'all' || t.type === currentFilterType;
+        const wallet = appData.wallets?.find(w => w.id === t.walletId);
         const matchesQuery = !query || 
           (t.note && t.note.toLowerCase().includes(query)) ||
           t.amount.toString().includes(query) ||
-          (t.paymentMethod && t.paymentMethod.toLowerCase().includes(query));
+          (t.paymentMethod && t.paymentMethod.toLowerCase().includes(query)) ||
+          (wallet && wallet.name.toLowerCase().includes(query));
         return matchesType && matchesQuery;
       });
 
@@ -2484,6 +2795,17 @@
       document.getElementById('depositGoalId').value = goal.id;
       document.getElementById('depositModalTitle').innerText = `Setor ke: ${goal.title}`;
       document.getElementById('depositAmount').value = '';
+
+      const sel = document.getElementById('depositWalletSelect');
+      if (sel) {
+        if (!appData.wallets || appData.wallets.length === 0) {
+          appData.wallets = JSON.parse(JSON.stringify(DEFAULT_WALLETS));
+        }
+        sel.innerHTML = appData.wallets.map(w => `
+          <option value="${w.id}">${w.icon} ${w.name} (Saldo: Rp ${formatIDR(getWalletBalance(w.id))})</option>
+        `).join('');
+      }
+
       openModal('modalDeposit');
     }
 
@@ -2503,6 +2825,8 @@
       const goal = appData.goals.find(g => g.id === goalId);
       if (!goal) return;
 
+      const walletId = document.getElementById('depositWalletSelect')?.value || (appData.wallets && appData.wallets[0] ? appData.wallets[0].id : 'w-bank');
+
       goal.currentAmount += amount;
       
       appData.transactions.unshift({
@@ -2512,7 +2836,8 @@
         categoryId: 'other_exp',
         note: `Setor Tabungan: ${goal.title}`,
         date: new Date().toISOString().split('T')[0],
-        paymentMethod: 'Transfer Bank'
+        paymentMethod: 'Transfer Bank',
+        walletId: walletId
       });
 
       saveData();
@@ -2534,6 +2859,7 @@
       document.getElementById('txAmount').value = '';
       document.getElementById('txNote').value = '';
       document.getElementById('txDate').value = new Date().toISOString().split('T')[0];
+      renderWalletSelector();
       openModal('modalTx');
     }
 
@@ -2582,7 +2908,8 @@
         categoryId: currentSelectedCategory,
         note,
         date,
-        paymentMethod
+        paymentMethod,
+        walletId: currentSelectedWallet
       });
 
       saveData();
@@ -2590,6 +2917,186 @@
       closeModal('modalTx');
       playHapticSound('coin');
       showToast('Transaksi berhasil dicatat!', type === 'income' ? '💵' : '💸');
+    }
+
+    /* Wallet Selectors & Management */
+    function renderWalletSelector() {
+      const grid = document.getElementById('walletSelectorGrid');
+      if (!grid) return;
+      if (!appData.wallets || appData.wallets.length === 0) {
+        appData.wallets = JSON.parse(JSON.stringify(DEFAULT_WALLETS));
+      }
+
+      if (!currentSelectedWallet || !appData.wallets.some(w => w.id === currentSelectedWallet)) {
+        currentSelectedWallet = (activeWalletFilter && activeWalletFilter !== 'all') ? activeWalletFilter : appData.wallets[0].id;
+      }
+
+      grid.innerHTML = appData.wallets.map(w => {
+        const bal = getWalletBalance(w.id);
+        const isSelected = w.id === currentSelectedWallet;
+        return `
+          <div class="wallet-pill ${isSelected ? 'active' : ''}" 
+               style="--active-color: ${w.color || 'var(--ios-blue)'}; --active-bg: ${w.color ? w.color + '25' : 'rgba(10,132,255,0.15)'};"
+               onclick="selectWallet('${w.id}', this)">
+            <span class="wallet-icon">${w.icon}</span>
+            <div style="display: flex; flex-direction: column; overflow: hidden;">
+              <span class="wallet-name">${w.name}</span>
+              <span class="wallet-balance">Rp ${formatIDR(bal)}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function selectWallet(walletId, element) {
+      playHapticSound('click');
+      currentSelectedWallet = walletId;
+      document.querySelectorAll('#walletSelectorGrid .wallet-pill').forEach(el => el.classList.remove('active'));
+      element.classList.add('active');
+    }
+
+    function renderSettingsWallets() {
+      const container = document.getElementById('walletListSettings');
+      if (!container) return;
+      if (!appData.wallets || appData.wallets.length === 0) {
+        appData.wallets = JSON.parse(JSON.stringify(DEFAULT_WALLETS));
+      }
+
+      container.innerHTML = appData.wallets.map(w => {
+        const bal = getWalletBalance(w.id);
+        return `
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: var(--bg-input); border-radius: var(--radius-md); border-left: 4px solid ${w.color || 'var(--ios-blue)'};">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div style="font-size: 22px;">${w.icon}</div>
+              <div>
+                <div style="font-size: 14px; font-weight: 700;">${w.name}</div>
+                <div style="font-size: 12px; color: var(--text-secondary);">Saldo: <strong>Rp ${formatIDR(bal)}</strong></div>
+              </div>
+            </div>
+            <div style="display: flex; gap: 6px;">
+              <button type="button" class="icon-btn" style="width: 32px; height: 32px;" onclick="openEditWalletModal('${w.id}')" title="Edit Tabungan">
+                ✏️
+              </button>
+              ${appData.wallets.length > 1 ? `
+                <button type="button" class="icon-btn" style="width: 32px; height: 32px; color: var(--ios-red);" onclick="deleteWallet('${w.id}')" title="Hapus Tabungan">
+                  🗑️
+                </button>
+              ` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function openAddWalletModal() {
+      playHapticSound('click');
+      document.getElementById('editWalletId').value = '';
+      document.getElementById('walletModalTitle').innerText = '➕ Tambah Tabungan Baru';
+      document.getElementById('walletName').value = '';
+      document.getElementById('selectedWalletIcon').value = '💵';
+      document.getElementById('selectedWalletColor').value = '#30D158';
+
+      document.querySelectorAll('#walletIconPicker .category-pill').forEach((p, idx) => {
+        p.classList.toggle('active', idx === 0);
+      });
+      document.querySelectorAll('#walletColorPicker .wallet-color-dot').forEach((p, idx) => {
+        p.classList.toggle('active', idx === 0);
+      });
+
+      openModal('modalWallet');
+    }
+
+    function openEditWalletModal(walletId) {
+      playHapticSound('click');
+      const w = appData.wallets.find(x => x.id === walletId);
+      if (!w) return;
+
+      document.getElementById('editWalletId').value = w.id;
+      document.getElementById('walletModalTitle').innerText = `✏️ Edit ${w.name}`;
+      document.getElementById('walletName').value = w.name;
+      document.getElementById('selectedWalletIcon').value = w.icon;
+      document.getElementById('selectedWalletColor').value = w.color || '#0A84FF';
+
+      document.querySelectorAll('#walletIconPicker .category-pill').forEach(p => {
+        const isThis = p.innerText.trim() === w.icon;
+        p.classList.toggle('active', isThis);
+      });
+
+      document.querySelectorAll('#walletColorPicker .wallet-color-dot').forEach(p => {
+        const isThis = p.getAttribute('data-color') === (w.color || '#0A84FF');
+        p.classList.toggle('active', isThis);
+      });
+
+      openModal('modalWallet');
+    }
+
+    function selectWalletIcon(icon, el) {
+      playHapticSound('click');
+      document.querySelectorAll('#walletIconPicker .category-pill').forEach(p => p.classList.remove('active'));
+      el.classList.add('active');
+      document.getElementById('selectedWalletIcon').value = icon;
+    }
+
+    function selectWalletColor(color, el) {
+      playHapticSound('click');
+      document.querySelectorAll('#walletColorPicker .wallet-color-dot').forEach(p => p.classList.remove('active'));
+      el.classList.add('active');
+      document.getElementById('selectedWalletColor').value = color;
+    }
+
+    function handleSaveWallet(e) {
+      e.preventDefault();
+      const name = document.getElementById('walletName').value.trim();
+      const icon = document.getElementById('selectedWalletIcon').value || '💵';
+      const color = document.getElementById('selectedWalletColor').value || '#0A84FF';
+      const editId = document.getElementById('editWalletId').value;
+
+      if (!name) {
+        alert('Nama tabungan wajib diisi');
+        return;
+      }
+
+      if (editId) {
+        const idx = appData.wallets.findIndex(x => x.id === editId);
+        if (idx !== -1) {
+          appData.wallets[idx].name = name;
+          appData.wallets[idx].icon = icon;
+          appData.wallets[idx].color = color;
+          showToast(`Tabungan "${name}" berhasil diubah!`, '💾');
+        }
+      } else {
+        const newWallet = {
+          id: 'w-' + Date.now(),
+          name,
+          icon,
+          color
+        };
+        appData.wallets.push(newWallet);
+        showToast(`Tabungan "${name}" berhasil ditambahkan!`, '🎉');
+      }
+
+      saveData();
+      renderAll();
+      closeModal('modalWallet');
+      playHapticSound('coin');
+    }
+
+    function deleteWallet(walletId) {
+      if (appData.wallets.length <= 1) {
+        alert('Anda harus memiliki minimal 1 tabungan');
+        return;
+      }
+      const w = appData.wallets.find(x => x.id === walletId);
+      if (!confirm(`Hapus tabungan "${w?.name || ''}"? Riwayat transaksi tetap tersimpan.`)) return;
+
+      appData.wallets = appData.wallets.filter(x => x.id !== walletId);
+      if (activeWalletFilter === walletId) activeWalletFilter = 'all';
+      if (currentSelectedWallet === walletId) currentSelectedWallet = appData.wallets[0].id;
+
+      saveData();
+      renderAll();
+      showToast('Tabungan berhasil dihapus', '🗑️');
+      playHapticSound('click');
     }
 
     /* Goals Handlers */
@@ -3014,7 +3521,7 @@
       }
     }
 
-    /* 1. EXPORT TO EXCEL / SPREADSHEET (.xlsx / .csv) */
+    /* 1. EXPORT TO EXCEL / SPREADSHEET (Formatted .xls / .csv) */
     async function exportMonthlyExcel() {
       const data = getFilteredReportData();
       if (data.transactions.length === 0) {
@@ -3022,27 +3529,153 @@
         return;
       }
 
-      let csv = '\uFEFF';
-      csv += `LAPORAN KEUANGAN KEUANGANKU\n`;
-      csv += `Periode: "${data.monthName}"\n`;
-      csv += `Tanggal Cetak: "${new Date().toLocaleDateString('id-ID', { dateStyle: 'full' })}"\n`;
-      csv += `Total Pemasukan: "Rp ${formatIDR(data.income)}"\n`;
-      csv += `Total Pengeluaran: "Rp ${formatIDR(data.expense)}"\n`;
-      csv += `Arus Kas Bersih: "Rp ${formatIDR(data.net)}"\n\n`;
-
-      csv += `"No","Tanggal","Tipe","Kategori","Catatan / Deskripsi","Metode Pembayaran","Pemasukan (Rp)","Pengeluaran (Rp)"\n`;
-
-      data.transactions.forEach((t, i) => {
-        const catList = t.type === 'income' ? CATEGORIES.income : CATEGORIES.expense;
-        const cat = catList.find(c => c.id === t.categoryId)?.name || 'Lainnya';
-        const isInc = t.type === 'income';
-        const cleanNote = (t.note || '').replace(/"/g, '""');
-
-        csv += `"${i + 1}","${t.date}","${isInc ? 'Pemasukan' : 'Pengeluaran'}","${cat}","${cleanNote}","${t.paymentMethod || 'Tunai'}","${isInc ? t.amount : 0}","${!isInc ? t.amount : 0}"\n`;
+      // Hitung ringkasan per Tabungan / Rekening
+      const walletSummary = {};
+      (appData.wallets || DEFAULT_WALLETS).forEach(w => {
+        walletSummary[w.id] = { name: w.name, icon: w.icon, income: 0, expense: 0 };
+      });
+      data.transactions.forEach(t => {
+        const wid = t.walletId || (appData.wallets && appData.wallets[0] ? appData.wallets[0].id : 'w-bank');
+        if (!walletSummary[wid]) {
+          walletSummary[wid] = { name: 'Tabungan', icon: '💳', income: 0, expense: 0 };
+        }
+        if (t.type === 'income') walletSummary[wid].income += t.amount;
+        else if (t.type === 'expense') walletSummary[wid].expense += t.amount;
       });
 
-      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-      await shareOrDownloadFile(blob, `Laporan_Keuangan_${data.monthKey}.csv`, 'text/csv');
+      // Format HTML Spreadsheet (.xls) yang dibuka langsung oleh Excel & Numbers dengan tampilan rapi & berwarna
+      let excelHtml = `
+        <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+        <head>
+          <!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>Laporan Keuangan</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+          <style>
+            body { font-family: 'Segoe UI', Calibri, Arial, sans-serif; font-size: 11pt; color: #1E293B; }
+            .title { font-size: 18pt; font-weight: bold; color: #0F172A; text-align: left; }
+            .subtitle { font-size: 11pt; color: #64748B; margin-bottom: 12px; }
+            .kpi-table { border-collapse: collapse; margin-bottom: 20px; }
+            .kpi-cell { padding: 10px 18px; border: 1px solid #CBD5E1; text-align: center; }
+            .kpi-inc { background-color: #DCFCE7; color: #166534; font-weight: bold; font-size: 13pt; }
+            .kpi-exp { background-color: #FEE2E2; color: #991B1B; font-weight: bold; font-size: 13pt; }
+            .kpi-net { background-color: #E0F2FE; color: #075985; font-weight: bold; font-size: 13pt; }
+            .section-title { font-size: 13pt; font-weight: bold; color: #0F172A; margin-top: 18px; margin-bottom: 8px; }
+            table.data-table { border-collapse: collapse; width: 100%; font-size: 10pt; }
+            table.data-table th { background-color: #0F172A; color: #FFFFFF; font-weight: bold; padding: 10px 8px; border: 1px solid #0F172A; text-align: left; }
+            table.data-table td { padding: 8px; border: 1px solid #CBD5E1; vertical-align: middle; }
+            table.data-table tr.even { background-color: #F8FAFC; }
+            .badge-inc { background-color: #DCFCE7; color: #15803D; font-weight: bold; padding: 3px 8px; border-radius: 12px; }
+            .badge-exp { background-color: #FEE2E2; color: #B91C1C; font-weight: bold; padding: 3px 8px; border-radius: 12px; }
+            .badge-qris { background-color: #F3E8FF; color: #7E22CE; font-weight: bold; padding: 3px 8px; border-radius: 12px; }
+            .badge-wallet { background-color: #E0F2FE; color: #0369A1; font-weight: 600; padding: 3px 8px; border-radius: 12px; }
+            .num-cell { text-align: right; font-variant-numeric: tabular-nums; }
+            .total-row { font-weight: bold; background-color: #F1F5F9; border-top: 2px solid #0F172A; border-bottom: 3px double #0F172A; }
+          </style>
+        </head>
+        <body>
+          <div class="title">LAPORAN KEUANGAN KEUANGANKU</div>
+          <div class="subtitle">Periode: <strong>${data.monthName}</strong> &bull; Dicetak: ${new Date().toLocaleDateString('id-ID', { dateStyle: 'full' })}</div>
+          
+          <table class="kpi-table">
+            <tr>
+              <td class="kpi-cell" style="background:#F1F5F9; font-weight:bold;">TOTAL PEMASUKAN</td>
+              <td class="kpi-cell" style="background:#F1F5F9; font-weight:bold;">TOTAL PENGELUARAN</td>
+              <td class="kpi-cell" style="background:#F1F5F9; font-weight:bold;">ARUS KAS BERSIH</td>
+            </tr>
+            <tr>
+              <td class="kpi-cell kpi-inc">Rp ${formatIDR(data.income)}</td>
+              <td class="kpi-cell kpi-exp">Rp ${formatIDR(data.expense)}</td>
+              <td class="kpi-cell kpi-net">${data.net >= 0 ? '+' : ''}Rp ${formatIDR(data.net)}</td>
+            </tr>
+          </table>
+
+          <div class="section-title">📊 Ringkasan per Tabungan / Rekening</div>
+          <table class="data-table" style="width: 70%; margin-bottom: 20px;">
+            <thead>
+              <tr>
+                <th>Tabungan / Rekening</th>
+                <th class="num-cell">Pemasukan</th>
+                <th class="num-cell">Pengeluaran</th>
+                <th class="num-cell">Arus Kas</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${Object.values(walletSummary).map((ws, idx) => `
+                <tr class="${idx % 2 === 1 ? 'even' : ''}">
+                  <td><strong>${ws.icon} ${ws.name}</strong></td>
+                  <td class="num-cell" style="color: #15803D;">Rp ${formatIDR(ws.income)}</td>
+                  <td class="num-cell" style="color: #B91C1C;">Rp ${formatIDR(ws.expense)}</td>
+                  <td class="num-cell" style="font-weight: bold; color: ${ws.income - ws.expense >= 0 ? '#15803D' : '#B91C1C'};">
+                    ${ws.income - ws.expense >= 0 ? '+' : ''}Rp ${formatIDR(ws.income - ws.expense)}
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+
+          <div class="section-title">📝 Rincian Lengkap Transaksi (${data.count} Transaksi)</div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th style="width: 4%;">No</th>
+                <th style="width: 12%;">Tanggal</th>
+                <th style="width: 12%;">Tipe</th>
+                <th style="width: 16%;">Tabungan / Rekening</th>
+                <th style="width: 15%;">Kategori</th>
+                <th style="width: 25%;">Catatan / Keterangan</th>
+                <th style="width: 12%;">Metode Pembayaran</th>
+                <th class="num-cell" style="width: 14%;">Pemasukan (Rp)</th>
+                <th class="num-cell" style="width: 14%;">Pengeluaran (Rp)</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${data.transactions.map((t, i) => {
+                const catList = t.type === 'income' ? CATEGORIES.income : CATEGORIES.expense;
+                const cat = catList.find(c => c.id === t.categoryId) || { icon: '📦', name: 'Lainnya' };
+                const isInc = t.type === 'income';
+                const wallet = appData.wallets?.find(w => w.id === t.walletId) || { icon: '💳', name: 'Tabungan' };
+                const isQRIS = t.paymentMethod === 'QRIS';
+
+                return `
+                  <tr class="${i % 2 === 1 ? 'even' : ''}">
+                    <td style="text-align: center; color: #64748B;">${i + 1}</td>
+                    <td style="text-align: center;">${t.date}</td>
+                    <td style="text-align: center;">
+                      <span class="${isInc ? 'badge-inc' : 'badge-exp'}">${isInc ? 'Pemasukan (+)' : 'Pengeluaran (-)'}</span>
+                    </td>
+                    <td>
+                      <span class="badge-wallet">${wallet.icon} ${wallet.name}</span>
+                    </td>
+                    <td>${cat.icon} ${cat.name}</td>
+                    <td>${t.note || '-'}</td>
+                    <td style="text-align: center;">
+                      <span class="${isQRIS ? 'badge-qris' : ''}">${isQRIS ? '🔳 QRIS' : (t.paymentMethod || 'Tunai')}</span>
+                    </td>
+                    <td class="num-cell" style="color: #15803D; font-weight: ${isInc ? 'bold' : 'normal'};">
+                      ${isInc ? 'Rp ' + formatIDR(t.amount) : '-'}
+                    </td>
+                    <td class="num-cell" style="color: #B91C1C; font-weight: ${!isInc ? 'bold' : 'normal'};">
+                      ${!isInc ? 'Rp ' + formatIDR(t.amount) : '-'}
+                    </td>
+                  </tr>
+                `;
+              }).join('')}
+              <tr class="total-row">
+                <td colspan="7" style="text-align: right; padding: 12px; font-size: 11pt;">TOTAL PERIODE INI:</td>
+                <td class="num-cell" style="color: #15803D; font-size: 11pt;">Rp ${formatIDR(data.income)}</td>
+                <td class="num-cell" style="color: #B91C1C; font-size: 11pt;">Rp ${formatIDR(data.expense)}</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div style="margin-top: 24px; font-size: 9pt; color: #94A3B8;">
+            Dokumen resmi dihasilkan oleh Aplikasi KeuanganKu iOS Edition &bull; Total Transaksi: ${data.count}
+          </div>
+        </body>
+        </html>
+      `;
+
+      const blob = new Blob([excelHtml], { type: 'application/vnd.ms-excel;charset=utf-8' });
+      await shareOrDownloadFile(blob, `Laporan_Keuangan_${data.monthKey}.xls`, 'application/vnd.ms-excel');
     }
 
     /* 2. EXPORT TO WORD DOCUMENT (.doc / .docx) */
@@ -3053,58 +3686,111 @@
         return;
       }
 
+      // Hitung ringkasan per Tabungan / Rekening
+      const walletSummary = {};
+      (appData.wallets || DEFAULT_WALLETS).forEach(w => {
+        walletSummary[w.id] = { name: w.name, icon: w.icon, income: 0, expense: 0 };
+      });
+      data.transactions.forEach(t => {
+        const wid = t.walletId || (appData.wallets && appData.wallets[0] ? appData.wallets[0].id : 'w-bank');
+        if (!walletSummary[wid]) {
+          walletSummary[wid] = { name: 'Tabungan', icon: '💳', income: 0, expense: 0 };
+        }
+        if (t.type === 'income') walletSummary[wid].income += t.amount;
+        else if (t.type === 'expense') walletSummary[wid].expense += t.amount;
+      });
+
       let docHtml = `
         <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
         <head>
           <meta charset='utf-8'>
           <title>Laporan Keuangan - ${data.monthName}</title>
           <style>
-            body { font-family: 'Segoe UI', Calibri, Arial, sans-serif; padding: 24px; color: #1e293b; }
-            h1 { color: #0284c7; margin-bottom: 4px; font-size: 24px; }
-            .subtitle { color: #64748b; font-size: 13px; margin-bottom: 20px; }
-            .summary-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-bottom: 24px; }
+            body { font-family: 'Segoe UI', Calibri, Arial, sans-serif; padding: 24px; color: #1E293B; line-height: 1.5; }
+            .header-banner { border-bottom: 3px solid #0F172A; padding-bottom: 12px; margin-bottom: 20px; }
+            h1 { color: #0F172A; margin: 0 0 6px 0; font-size: 24px; font-weight: 800; }
+            .subtitle { color: #64748B; font-size: 13px; }
+            .summary-box { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: 16px; margin-bottom: 24px; }
             .summary-grid { display: table; width: 100%; }
-            .summary-col { display: table-cell; width: 33.33%; text-align: center; }
-            .summary-val { font-size: 18px; font-weight: bold; margin-top: 4px; }
-            table { width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 12px; }
-            th { background-color: #0284c7; color: white; padding: 10px; text-align: left; border: 1px solid #0284c7; }
-            td { padding: 9px; border: 1px solid #cbd5e1; }
-            tr:nth-child(even) { background-color: #f8fafc; }
-            .income-text { color: #16a34a; font-weight: bold; }
-            .expense-text { color: #dc2626; font-weight: bold; }
+            .summary-col { display: table-cell; width: 33.33%; text-align: center; vertical-align: middle; }
+            .summary-label { font-size: 11px; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
+            .summary-val { font-size: 20px; font-weight: 800; margin-top: 4px; }
+            h3 { color: #0F172A; font-size: 15px; margin: 20px 0 10px; font-weight: 700; }
+            table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 11px; }
+            th { background-color: #0F172A; color: #FFFFFF; padding: 10px 8px; text-align: left; font-weight: 700; border: 1px solid #0F172A; }
+            td { padding: 9px 8px; border: 1px solid #CBD5E1; vertical-align: middle; }
+            tr:nth-child(even) { background-color: #F8FAFC; }
+            .badge { display: inline-block; padding: 2px 7px; border-radius: 4px; font-size: 10px; font-weight: 700; }
+            .badge-inc { background-color: #DCFCE7; color: #15803D; }
+            .badge-exp { background-color: #FEE2E2; color: #B91C1C; }
+            .badge-qris { background-color: #F3E8FF; color: #7E22CE; }
+            .badge-wallet { background-color: #E0F2FE; color: #0369A1; }
+            .text-right { text-align: right; }
+            .text-center { text-align: center; }
+            .total-row td { background-color: #F1F5F9; font-weight: 800; border-top: 2px solid #0F172A; font-size: 12px; }
           </style>
         </head>
         <body>
-          <h1>Laporan Keuangan Bulanan</h1>
-          <div class="subtitle">Aplikasi KeuanganKu • Periode: <strong>${data.monthName}</strong> • Dicetak pada: ${new Date().toLocaleDateString('id-ID', { dateStyle: 'full' })}</div>
+          <div class="header-banner">
+            <h1>📑 Laporan Keuangan Bulanan</h1>
+            <div class="subtitle">Aplikasi KeuanganKu iOS Edition &bull; Periode: <strong>${data.monthName}</strong> &bull; Dicetak: ${new Date().toLocaleDateString('id-ID', { dateStyle: 'full' })}</div>
+          </div>
 
           <div class="summary-box">
             <div class="summary-grid">
               <div class="summary-col">
-                <span style="color: #16a34a; font-size: 11px; text-transform: uppercase;">Total Pemasukan</span>
-                <div class="summary-val" style="color: #16a34a;">Rp ${formatIDR(data.income)}</div>
+                <div class="summary-label" style="color: #15803D;">Total Pemasukan</div>
+                <div class="summary-val" style="color: #15803D;">Rp ${formatIDR(data.income)}</div>
               </div>
               <div class="summary-col">
-                <span style="color: #dc2626; font-size: 11px; text-transform: uppercase;">Total Pengeluaran</span>
-                <div class="summary-val" style="color: #dc2626;">Rp ${formatIDR(data.expense)}</div>
+                <div class="summary-label" style="color: #B91C1C;">Total Pengeluaran</div>
+                <div class="summary-val" style="color: #B91C1C;">Rp ${formatIDR(data.expense)}</div>
               </div>
               <div class="summary-col">
-                <span style="color: #0284c7; font-size: 11px; text-transform: uppercase;">Arus Kas Bersih</span>
-                <div class="summary-val" style="color: ${data.net >= 0 ? '#16a34a' : '#dc2626'};">Rp ${formatIDR(data.net)}</div>
+                <div class="summary-label" style="color: #0369A1;">Arus Kas Bersih</div>
+                <div class="summary-val" style="color: ${data.net >= 0 ? '#15803D' : '#B91C1C'};">
+                  ${data.net >= 0 ? '+' : ''}Rp ${formatIDR(data.net)}
+                </div>
               </div>
             </div>
           </div>
 
-          <h3>Daftar Rincian Transaksi (${data.count} Transaksi)</h3>
+          <h3>📊 Ringkasan per Tabungan / Rekening</h3>
+          <table style="width: 80%; margin-bottom: 24px;">
+            <thead>
+              <tr>
+                <th>Tabungan / Rekening</th>
+                <th class="text-right">Pemasukan</th>
+                <th class="text-right">Pengeluaran</th>
+                <th class="text-right">Arus Kas Bersih</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${Object.values(walletSummary).map(ws => `
+                <tr>
+                  <td><strong>${ws.icon} ${ws.name}</strong></td>
+                  <td class="text-right" style="color: #15803D;">Rp ${formatIDR(ws.income)}</td>
+                  <td class="text-right" style="color: #B91C1C;">Rp ${formatIDR(ws.expense)}</td>
+                  <td class="text-right" style="font-weight: 800; color: ${ws.income - ws.expense >= 0 ? '#15803D' : '#B91C1C'};">
+                    ${ws.income - ws.expense >= 0 ? '+' : ''}Rp ${formatIDR(ws.income - ws.expense)}
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+
+          <h3>📝 Rincian Catatan Transaksi (${data.count} Transaksi)</h3>
           <table>
             <thead>
               <tr>
-                <th style="width: 5%;">No</th>
-                <th style="width: 15%;">Tanggal</th>
+                <th style="width: 4%;">No</th>
+                <th style="width: 12%;">Tanggal</th>
+                <th style="width: 12%;">Tipe</th>
+                <th style="width: 16%;">Tabungan</th>
                 <th style="width: 15%;">Kategori</th>
-                <th style="width: 35%;">Keterangan / Catatan</th>
-                <th style="width: 15%;">Metode</th>
-                <th style="width: 15%; text-align: right;">Nominal (Rp)</th>
+                <th style="width: 25%;">Catatan / Keterangan</th>
+                <th style="width: 12%;">Metode</th>
+                <th style="width: 14%; text-align: right;">Nominal (Rp)</th>
               </tr>
             </thead>
             <tbody>
@@ -3112,24 +3798,41 @@
                 const catList = t.type === 'income' ? CATEGORIES.income : CATEGORIES.expense;
                 const cat = catList.find(c => c.id === t.categoryId)?.name || 'Lainnya';
                 const isInc = t.type === 'income';
+                const wallet = appData.wallets?.find(w => w.id === t.walletId) || { icon: '💳', name: 'Tabungan' };
+                const isQRIS = t.paymentMethod === 'QRIS';
+
                 return `
                   <tr>
-                    <td>${i + 1}</td>
-                    <td>${t.date}</td>
+                    <td class="text-center" style="color: #64748B;">${i + 1}</td>
+                    <td class="text-center">${t.date}</td>
+                    <td class="text-center">
+                      <span class="badge ${isInc ? 'badge-inc' : 'badge-exp'}">${isInc ? '+ Masuk' : '- Keluar'}</span>
+                    </td>
+                    <td>
+                      <span class="badge badge-wallet">${wallet.icon} ${wallet.name}</span>
+                    </td>
                     <td>${cat}</td>
                     <td>${t.note || '-'}</td>
-                    <td>${t.paymentMethod || 'Tunai'}</td>
-                    <td style="text-align: right;" class="${isInc ? 'income-text' : 'expense-text'}">
+                    <td class="text-center">
+                      <span class="badge ${isQRIS ? 'badge-qris' : ''}">${isQRIS ? '🔳 QRIS' : (t.paymentMethod || 'Tunai')}</span>
+                    </td>
+                    <td class="text-right" style="font-weight: 800; color: ${isInc ? '#15803D' : '#B91C1C'};">
                       ${isInc ? '+' : '-'}Rp ${formatIDR(t.amount)}
                     </td>
                   </tr>
                 `;
               }).join('')}
+              <tr class="total-row">
+                <td colspan="7" class="text-right" style="padding: 12px;">TOTAL ARUS KAS BERSIH:</td>
+                <td class="text-right" style="color: ${data.net >= 0 ? '#15803D' : '#B91C1C'};">
+                  ${data.net >= 0 ? '+' : ''}Rp ${formatIDR(data.net)}
+                </td>
+              </tr>
             </tbody>
           </table>
 
-          <div style="margin-top: 30px; font-size: 11px; color: #94a3b8; text-align: right;">
-            Dokumen sah dihasilkan secara otomatis oleh KeuanganKu iOS Edition
+          <div style="margin-top: 36px; font-size: 11px; color: #94A3B8; text-align: right;">
+            Dokumen sah dihasilkan secara otomatis oleh KeuanganKu iOS Edition &bull; ${new Date().getFullYear()}
           </div>
         </body>
         </html>
@@ -3147,6 +3850,20 @@
         return;
       }
 
+      // Hitung ringkasan per Tabungan / Rekening
+      const walletSummary = {};
+      (appData.wallets || DEFAULT_WALLETS).forEach(w => {
+        walletSummary[w.id] = { name: w.name, icon: w.icon, income: 0, expense: 0 };
+      });
+      data.transactions.forEach(t => {
+        const wid = t.walletId || (appData.wallets && appData.wallets[0] ? appData.wallets[0].id : 'w-bank');
+        if (!walletSummary[wid]) {
+          walletSummary[wid] = { name: 'Tabungan', icon: '💳', income: 0, expense: 0 };
+        }
+        if (t.type === 'income') walletSummary[wid].income += t.amount;
+        else if (t.type === 'expense') walletSummary[wid].expense += t.amount;
+      });
+
       const reportHtml = `
         <!DOCTYPE html>
         <html>
@@ -3154,63 +3871,90 @@
           <meta charset="utf-8">
           <title>Laporan Keuangan - ${data.monthName}</title>
           <style>
-            @page { size: A4; margin: 15mm; }
-            body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: #1e293b; margin: 0; padding: 15px; }
-            .header-wrap { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #0284c7; padding-bottom: 12px; margin-bottom: 16px; }
-            .app-title { font-size: 22px; font-weight: 800; color: #0284c7; }
-            .report-period { font-size: 14px; color: #64748b; font-weight: 600; margin-top: 4px; }
+            @page { size: A4; margin: 12mm 14mm; }
+            * { box-sizing: border-box; }
+            body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: #0F172A; margin: 0; padding: 10px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .header-wrap { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2.5px solid #0F172A; padding-bottom: 12px; margin-bottom: 18px; }
+            .app-title { font-size: 22px; font-weight: 800; color: #0F172A; letter-spacing: -0.5px; }
+            .report-period { font-size: 13px; color: #64748B; font-weight: 600; margin-top: 4px; }
             .summary-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
-            .card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; text-align: center; }
-            .card-title { font-size: 10px; text-transform: uppercase; font-weight: 700; color: #64748b; margin-bottom: 4px; }
-            .card-val { font-size: 16px; font-weight: 800; }
-            table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 10px; }
-            th { background: #0284c7; color: #fff; padding: 8px; text-align: left; }
-            td { padding: 7px; border-bottom: 1px solid #e2e8f0; }
-            tr:nth-child(even) { background: #f8fafc; }
+            .card { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 14px; text-align: center; }
+            .card-title { font-size: 11px; text-transform: uppercase; font-weight: 700; color: #64748B; letter-spacing: 0.5px; margin-bottom: 4px; }
+            .card-val { font-size: 18px; font-weight: 800; letter-spacing: -0.3px; }
+            .inc { color: #16A34A; }
+            .exp { color: #DC2626; }
+            .section-head { font-size: 13px; font-weight: 700; color: #0F172A; margin: 16px 0 8px; text-transform: uppercase; letter-spacing: 0.4px; }
+            .wallet-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; margin-bottom: 20px; }
+            .wallet-item { background: #F1F5F9; border-radius: 8px; padding: 10px; border-left: 3.5px solid #0A84FF; font-size: 11px; }
+            table { width: 100%; border-collapse: collapse; font-size: 10px; margin-top: 8px; border-radius: 8px; overflow: hidden; border: 1px solid #E2E8F0; }
+            th { background: #0F172A; color: #FFFFFF; padding: 9px 8px; text-align: left; font-weight: 700; letter-spacing: 0.3px; }
+            td { padding: 8px; border-bottom: 1px solid #E2E8F0; vertical-align: middle; }
+            tr:nth-child(even) { background: #F8FAFC; }
+            .badge { display: inline-block; padding: 3px 8px; border-radius: 10px; font-size: 9.5px; font-weight: 700; white-space: nowrap; }
+            .badge-inc { background: rgba(34, 197, 94, 0.15); color: #15803D; }
+            .badge-exp { background: rgba(239, 68, 68, 0.15); color: #B91C1C; }
+            .badge-wallet { background: rgba(10, 132, 255, 0.12); color: #0284C7; font-weight: 600; }
+            .badge-qris { background: rgba(191, 90, 242, 0.18); color: #7E22CE; font-weight: 800; }
             .text-right { text-align: right; }
-            .inc { color: #16a34a; font-weight: 700; }
-            .exp { color: #dc2626; font-weight: 700; }
-            .footer-note { margin-top: 30px; font-size: 10px; color: #94a3b8; text-align: center; }
+            .text-center { text-align: center; }
+            .total-row { background: #E2E8F0 !important; font-weight: 800; font-size: 11px; }
+            .footer-note { margin-top: 24px; font-size: 10px; color: #94A3B8; text-align: center; border-top: 1px solid #E2E8F0; padding-top: 12px; }
           </style>
         </head>
         <body>
           <div class="header-wrap">
             <div>
-              <div class="app-title">KeuanganKu • Laporan Keuangan</div>
-              <div class="report-period">Periode: ${data.monthName}</div>
+              <div class="app-title">KeuanganKu &bull; Laporan Keuangan</div>
+              <div class="report-period">Periode Laporan: <strong>${data.monthName}</strong></div>
             </div>
-            <div style="text-align: right; font-size: 11px; color: #64748b;">
-              Tanggal Cetak:<br><strong>${new Date().toLocaleDateString('id-ID', { dateStyle: 'full' })}</strong>
+            <div style="text-align: right; font-size: 11px; color: #64748B;">
+              Tanggal Dokumen:<br><strong>${new Date().toLocaleDateString('id-ID', { dateStyle: 'full' })}</strong>
             </div>
           </div>
 
           <div class="summary-cards">
-            <div class="card">
+            <div class="card" style="background: rgba(34, 197, 94, 0.08); border-color: rgba(34, 197, 94, 0.25);">
               <div class="card-title">Total Pemasukan</div>
-              <div class="card-val inc">Rp ${formatIDR(data.income)}</div>
+              <div class="card-val inc">+Rp ${formatIDR(data.income)}</div>
             </div>
-            <div class="card">
+            <div class="card" style="background: rgba(239, 68, 68, 0.08); border-color: rgba(239, 68, 68, 0.25);">
               <div class="card-title">Total Pengeluaran</div>
-              <div class="card-val exp">Rp ${formatIDR(data.expense)}</div>
+              <div class="card-val exp">-Rp ${formatIDR(data.expense)}</div>
             </div>
-            <div class="card">
+            <div class="card" style="background: rgba(10, 132, 255, 0.08); border-color: rgba(10, 132, 255, 0.25);">
               <div class="card-title">Arus Kas Bersih</div>
-              <div class="card-val" style="color: ${data.net >= 0 ? '#16a34a' : '#dc2626'};">
+              <div class="card-val" style="color: ${data.net >= 0 ? '#15803D' : '#B91C1C'};">
                 ${data.net >= 0 ? '+' : ''}Rp ${formatIDR(data.net)}
               </div>
             </div>
           </div>
 
-          <h4 style="margin: 0 0 8px 0; font-size: 13px;">Rincian Transaksi (${data.count} Transaksi Terdata)</h4>
+          <div class="section-head">📊 Ringkasan Tabungan / Rekening</div>
+          <div class="wallet-grid">
+            ${Object.values(walletSummary).map(ws => `
+              <div class="wallet-item">
+                <div style="font-weight: 700; margin-bottom: 2px;">${ws.icon} ${ws.name}</div>
+                <div style="color: #64748B; font-size: 10px;">
+                  Masuk: <strong style="color: #15803D;">Rp ${formatIDR(ws.income)}</strong><br>
+                  Keluar: <strong style="color: #B91C1C;">Rp ${formatIDR(ws.expense)}</strong><br>
+                  Net: <strong style="color: ${ws.income - ws.expense >= 0 ? '#15803D' : '#B91C1C'};">${ws.income - ws.expense >= 0 ? '+' : ''}Rp ${formatIDR(ws.income - ws.expense)}</strong>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+
+          <div class="section-head">📝 Rincian Transaksi (${data.count} Transaksi)</div>
           <table>
             <thead>
               <tr>
-                <th style="width: 5%;">No</th>
-                <th style="width: 15%;">Tanggal</th>
-                <th style="width: 18%;">Kategori</th>
-                <th style="width: 32%;">Keterangan</th>
-                <th style="width: 15%;">Metode</th>
-                <th style="width: 15%; text-align: right;">Nominal</th>
+                <th style="width: 4%; text-align: center;">No</th>
+                <th style="width: 12%; text-align: center;">Tanggal</th>
+                <th style="width: 11%; text-align: center;">Tipe</th>
+                <th style="width: 16%;">Tabungan</th>
+                <th style="width: 14%;">Kategori</th>
+                <th style="width: 25%;">Keterangan</th>
+                <th style="width: 10%; text-align: center;">Metode</th>
+                <th style="width: 14%; text-align: right;">Nominal</th>
               </tr>
             </thead>
             <tbody>
@@ -3218,24 +3962,41 @@
                 const catList = t.type === 'income' ? CATEGORIES.income : CATEGORIES.expense;
                 const cat = catList.find(c => c.id === t.categoryId)?.name || 'Lainnya';
                 const isInc = t.type === 'income';
+                const wallet = appData.wallets?.find(w => w.id === t.walletId) || { icon: '💳', name: 'Tabungan' };
+                const isQRIS = t.paymentMethod === 'QRIS';
+
                 return `
                   <tr>
-                    <td>${i + 1}</td>
-                    <td>${t.date}</td>
+                    <td class="text-center" style="color: #64748B;">${i + 1}</td>
+                    <td class="text-center">${t.date}</td>
+                    <td class="text-center">
+                      <span class="badge ${isInc ? 'badge-inc' : 'badge-exp'}">${isInc ? '+ Masuk' : '- Keluar'}</span>
+                    </td>
+                    <td>
+                      <span class="badge badge-wallet">${wallet.icon} ${wallet.name}</span>
+                    </td>
                     <td>${cat}</td>
                     <td>${t.note || '-'}</td>
-                    <td>${t.paymentMethod || 'Tunai'}</td>
-                    <td class="text-right ${isInc ? 'inc' : 'exp'}">
+                    <td class="text-center">
+                      <span class="badge ${isQRIS ? 'badge-qris' : ''}">${isQRIS ? '🔳 QRIS' : (t.paymentMethod || 'Tunai')}</span>
+                    </td>
+                    <td class="text-right" style="font-weight: 800; color: ${isInc ? '#15803D' : '#B91C1C'};">
                       ${isInc ? '+' : '-'}Rp ${formatIDR(t.amount)}
                     </td>
                   </tr>
                 `;
               }).join('')}
+              <tr class="total-row">
+                <td colspan="7" class="text-right" style="padding: 10px;">TOTAL BERSIH (NET):</td>
+                <td class="text-right" style="color: ${data.net >= 0 ? '#15803D' : '#B91C1C'};">
+                  ${data.net >= 0 ? '+' : ''}Rp ${formatIDR(data.net)}
+                </td>
+              </tr>
             </tbody>
           </table>
 
           <div class="footer-note">
-            Dokumen ini dihasilkan dari Aplikasi KeuanganKu iOS Edition.
+            Dokumen resmi dihasilkan dari Aplikasi KeuanganKu iOS Edition &bull; Berstandar Apple Human Interface Guidelines
           </div>
         </body>
         </html>
